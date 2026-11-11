@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy · Ashrei</title>
+<meta name="description" content="What the Ashrei app keeps on your iPhone, what it sends, and to whom.">
+<!--
+  Facts on this page were taken from the code on 2026-11-10 (src/lib/backend.ts, src/features/ask,
+  src/features/report, src/features/chains, src/features/location, src/features/premium,
+  supabase/functions/ask, supabase/migrations). Update this page whenever any of those change.
+-->
+<style>
+  :root { --bg:#EEF1FF; --card:#FFFFFF; --ink:#0E1A3A; --muted:#5D6785; --accent:#3B5BD9; --line:#DDE2F5; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0B1020; --card:#161C30; --ink:#fff; --muted:#A3ABC4; --accent:#8EA9F0; --line:#252C45; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.5 -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+  main { max-width:640px; margin:0 auto; padding:32px 16px calc(40px + env(safe-area-inset-bottom)); }
+  h1 { font-size:30px; line-height:1.15; letter-spacing:-0.6px; margin:10px 0 6px; }
+  h2 { font-size:20px; letter-spacing:-0.3px; margin:28px 0 8px; }
+  p, li { color:var(--ink); }
+  .muted { color:var(--muted); font-size:15px; }
+  .card { background:var(--card); border-radius:16px; padding:16px 18px; margin:16px 0; }
+  .card p:first-child { margin-top:0; } .card p:last-child { margin-bottom:0; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th, td { text-align:left; vertical-align:top; padding:8px 6px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; }
+  .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  a { color:var(--accent); }
+  .todo { background:#FFE9A8; color:#5A4200; padding:0 4px; border-radius:4px; font-weight:600; }
+  [dir="rtl"] ul { padding-left:0; padding-right:20px; }
+  hr { border:0; border-top:1px solid var(--line); margin:36px 0; }
+  nav.lang { font-size:15px; margin-top:4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ashrei Privacy Policy</h1>
+  <p class="muted">Effective 10 November 2026 · Applies to the Ashrei iPhone app and its Lock Screen and Home Screen widgets.</p>
+  <nav class="lang"><a href="#he" lang="he">עברית</a></nav>
+
+  <div class="card">
+    <p><strong>The short version.</strong> Ashrei has no accounts, no ads, no tracking and no analytics. Your reading, streak, settings, prayer list, highlights, location and the answers you gave in onboarding stay on your iPhone. Something leaves your phone only when you use a feature that needs the internet: <strong>Ask Ashrei AI</strong>, <strong>Report an error</strong>, <strong>Tehillim chains</strong>, and <strong>buying Premium</strong>. This page lists exactly what is sent in each case.</p>
+  </div>
+
+  <h2>What stays on your iPhone</h2>
+  <ul>
+    <li>Your reading progress, streak, cycles, favourites, highlights and their colour names.</li>
+    <li>Your settings: interface language, nusach, pronunciation, text layers, Divine-name style, reminder times.</li>
+    <li>What you told us in onboarding or in Settings → About you (for example your Hebrew level, man or woman, age, Hebrew name). These only choose what the app shows you; they are never sent.</li>
+    <li>Your prayer list (names of people you pray for).</li>
+    <li>Your Ask conversations. They are kept in memory only while the app is open and are cleared when you quit the app or tap “New chat”.</li>
+    <li>Your location, if you set one (see below).</li>
+  </ul>
+  <p>Reminders are local notifications scheduled on your phone; we do not use a push-notification server. Widgets read their data from a shared container on your phone (App Group); they do not connect to the internet.</p>
+
+  <h2>Your location</h2>
+  <p>Location is optional. If you tap “Use my location”, iOS asks for permission (“while using the app” only). The app reads your position once, rounds it to about 1&nbsp;km and saves it <strong>on your phone</strong> to work out prayer times, candle lighting and Shabbat times. To show a city name, the app asks Apple’s own geocoding service (part of iOS) to name the coordinates; that request is handled by Apple under Apple’s privacy policy. The Jerusalem compass reads your position only while it is open and saves nothing. We never receive your location. You can pick a city from the list instead and never share your location at all.</p>
+
+  <h2>What leaves your iPhone, and why</h2>
+  <p>The app identifies itself to our server with a <strong>random install id</strong> made up on your phone when you first use an online feature. It is not your name, email, Apple ID, phone number or the advertising identifier, and it is not shared with other apps. Deleting the app deletes the id; a new install gets a new one.</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>Feature</th><th>What is sent</th><th>Where it goes</th></tr>
+    <tr>
+      <td><strong>Ask Ashrei AI</strong> (Premium)</td>
+      <td>Your question, the earlier questions and answers of the same conversation, which verse or prayer you are asking about (as a reference, e.g. “Psalm 23:1”), your Divine-name style, whether you have Premium or are in the free trial, and the install id.</td>
+      <td>Our server (Supabase), which sends the question and the text of the verse or prayer to <strong>Anthropic</strong> (the company that makes Claude) to write the answer. Our server keeps a log (see below). The app asks for your OK before the first question is sent.</td>
+    </tr>
+    <tr>
+      <td><strong>Report an error</strong></td>
+      <td>The place in the text (e.g. “Psalms 23:1”), a short excerpt of it, which part looks wrong, your note, the reading settings that change the text (pronunciation, nusach, translation), the time, and the install id.</td>
+      <td>Our server (Supabase), read only by our religious reviewer and us. If the server can’t be reached the report waits on your phone and is sent later.</td>
+    </tr>
+    <tr>
+      <td><strong>Tehillim chains</strong></td>
+      <td>If you start a chain: its title, the reason (for example a complete recovery), the name and the mother’s or father’s name you type, and man/woman. If you take psalms: the chapter numbers, the first name you choose to show (optional), when you took and finished them, and the install id.</td>
+      <td>Our server (Supabase). <strong>Chains can be seen by anyone who has the link</strong> (they are not listed or searchable). Anyone can report a chain from its page, and the person who started it can delete it: the title, the name and the first names of the people taking part can be seen by them. Only type what the family is happy to share.</td>
+    </tr>
+    <tr>
+      <td><strong>Premium purchases</strong></td>
+      <td>Payment is handled entirely by Apple; we never see your card or Apple ID. To know whether you have Premium, the app uses <strong>RevenueCat</strong>, which receives the App Store purchase record and an anonymous app user id it creates.</td>
+      <td>Apple and RevenueCat.</td>
+    </tr>
+  </table>
+  </div>
+
+  <h2>The Ask log</h2>
+  <p>For each Ask answer our server stores: the install id, the verse or prayer reference, your question, the answer, how the answer ended, the AI model, its cost and token counts, the time, and a <strong>salted one-way hash of your IP address</strong>. The raw IP address is never stored; the hash is used only to stop abuse (a limit on questions per hour and per day). We use the log to keep Ask within its limits, to check answers for accuracy and respect for the texts, and to fix mistakes. Please don’t put your name, contact details or anything private in a question.</p>
+  <p>The answers are written by AI and can be wrong. Ask is not a rabbi; for questions of practice, ask your rabbi.</p>
+
+  <h2>Who processes data for us</h2>
+  <ul>
+    <li><strong>Supabase</strong> — hosts our database and the Ask server (United States region). <a href="https://supabase.com/privacy">supabase.com/privacy</a></li>
+    <li><strong>Anthropic</strong> — writes Ask answers from the question and the text. Under its commercial API terms Anthropic does not use this data to train its models. <a href="https://www.anthropic.com/legal/privacy">anthropic.com/legal/privacy</a></li>
+    <li><strong>RevenueCat</strong> — checks App Store subscriptions. <a href="https://www.revenuecat.com/privacy">revenuecat.com/privacy</a></li>
+    <li><strong>Apple</strong> — the App Store, payments, notifications, iOS geocoding. <a href="https://www.apple.com/legal/privacy/">apple.com/legal/privacy</a></li>
+  </ul>
+  <p>We don’t sell or rent data, we don’t share it with advertisers or data brokers, and we don’t use it to build profiles. The app contains <strong>no analytics, advertising or crash-reporting SDK</strong> and does not track you across apps or websites. If we ever add analytics or crash reports, we will update this page and the App Store privacy details first.</p>
+
+  <h2>How long we keep it</h2>
+  <ul>
+    <li>Ask log: 90 days, then deleted automatically.</li>
+    <li>Error reports: until the reviewer has dealt with them and the fix has shipped.</li>
+    <li>Chains: as long as the chain exists. Psalms taken but not finished within 24 hours are released (the claim and its first name are deleted).</li>
+  </ul>
+
+  <h2>Your choices and rights</h2>
+  <ul>
+    <li>You can use all the texts, the Siddur, cycles, reminders and widgets without any of the online features.</li>
+    <li>You can turn off location, photos and notifications at any time in the iPhone Settings app.</li>
+    <li>Because we have no accounts, we can’t link data to you by name. To ask for a copy or deletion of data sent from your phone (for example a chain you started), write to us at <a href="mailto:ashrei.app@gmail.com">ashrei.app@gmail.com</a> with the chain link or the date and wording of your question, and we will find and delete it. Depending on where you live (for example under the GDPR or the CCPA) you have the right to access, correct and delete your data and to complain to a data-protection authority.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Ashrei is a prayer and study app for a general audience. It is not aimed at children under 13 and we don’t knowingly collect personal information from them.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes we will update this page and its date. Important changes will also be noted in the app’s release notes.</p>
+
+  <h2>Contact</h2>
+  <p>Ashrei is made by Avihai Hemo. Questions about privacy: <a href="mailto:ashrei.app@gmail.com">ashrei.app@gmail.com</a></p>
+
+  <hr>
+
+  <section id="he" dir="rtl" lang="he">
+    <h1>מדיניות פרטיות</h1>
+    <p class="muted">בתוקף מ־10 בנובמבר 2026. הנוסח האנגלי למעלה הוא המחייב.</p>
+    <div class="card">
+      <p><strong>בקצרה.</strong> באשרי אין חשבונות, אין פרסומות, אין מעקב ואין כלי אנליטיקה. הקריאה, הרצף, ההגדרות, רשימת התפילה, הסימונים, המיקום והתשובות שנתתם בהיכרות נשארים באייפון שלכם.</p>
+    </div>
+    <h2>מה יוצא מהטלפון</h2>
+    <ul>
+      <li><strong>שאלו את אשרי AI</strong> (פרימיום): השאלה, השיחה הקודמת באותו נושא, הפסוק או התפילה (כמזהה), ומזהה התקנה אקראי. השרת שלנו (Supabase) שולח את השאלה ואת הטקסט ל־Anthropic כדי לכתוב את התשובה, ושומר יומן: השאלה, התשובה, העלות, ו־hash חד־כיווני ממולח של כתובת ה־IP (הכתובת עצמה לא נשמרת).</li>
+      <li><strong>דיווח על טעות</strong>: המקום בטקסט, קטע קצר ממנו, מה נראה שגוי, ההערה שלכם, הגדרות הקריאה ומזהה ההתקנה.</li>
+      <li><strong>שרשראות תהילים</strong>: שם השרשרת, הסיבה, השם ושם האם או האב שהקלדתם, ואת השם הפרטי שבחרתם להציג. <strong>כל מי שיש לו את הקישור רואה אותם.</strong></li>
+      <li><strong>רכישת פרימיום</strong>: התשלום נעשה כולו דרך Apple. RevenueCat מקבלת את רשומת הרכישה ומזהה משתמש אנונימי.</li>
+    </ul>
+    <h2>מיקום</h2>
+    <p>המיקום רשות. הוא נשמר רק בטלפון (מעוגל לכקילומטר אחד) לחישוב זמני התפילה והדלקת הנרות. שם העיר מתקבל משירות המיפוי של Apple. אנחנו לא מקבלים את המיקום שלכם.</p>
+    <h2>יצירת קשר</h2>
+    <p>לבקשת עותק או מחיקה של מידע: <a href="mailto:ashrei.app@gmail.com">ashrei.app@gmail.com</a></p>
+  </section>
+</main>
+</body>
+</html>

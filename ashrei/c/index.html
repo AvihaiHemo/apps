@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tehillim Chain · Ashrei</title>
+<meta name="description" content="Say a few psalms so the whole book of Tehillim is completed together.">
+<style>
+  :root { --bg:#F2F2F7; --card:#FFFFFF; --ink:#000; --muted:#6B6B70; --accent:#2B4C9B; --tint:#E6ECF8; --on:#fff; --fill:#E5E5EA; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#000; --card:#1C1C1E; --ink:#fff; --muted:#98989F; --accent:#8EA9F0; --tint:#1E2A47; --on:#0B1530; --fill:#2C2C2E; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.4 -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+  main { max-width:560px; margin:0 auto; padding:24px 16px calc(32px + env(safe-area-inset-bottom)); }
+  h1 { font-size:26px; line-height:1.2; letter-spacing:-0.4px; margin:8px 0 12px; }
+  .card { background:var(--card); border-radius:14px; padding:16px; margin:16px 0; }
+  .muted { color:var(--muted); font-size:15px; }
+  .bar { height:10px; background:var(--fill); border-radius:5px; overflow:hidden; }
+  .bar > div { height:100%; background:var(--accent); border-radius:5px; width:0; transition: width .3s ease; }
+  button, .btn { display:block; width:100%; height:50px; border:0; border-radius:14px; background:var(--accent); color:var(--on); font:600 17px -apple-system, system-ui; text-align:center; line-height:50px; text-decoration:none; }
+  button:active, .btn:active { transform: scale(.98); }
+  button[disabled] { opacity:.5; }
+  .seg { display:flex; gap:8px; margin-bottom:12px; }
+  .seg button { background:var(--fill); color:var(--ink); height:40px; line-height:40px; }
+  .seg button.on { background:var(--accent); color:var(--on); }
+  input { width:100%; height:44px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); padding:0 12px; font-size:17px; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap:6px; }
+  .cell { height:38px; border-radius:10px; background:var(--card); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; }
+  .cell.taken { background:var(--tint); } .cell.done { background:var(--accent); color:var(--on); }
+  .mine { font-weight:600; }
+  @media (prefers-reduced-motion: reduce) { .bar > div { transition:none; } button:active, .btn:active { transform:none; } }
+</style>
+<script src="../config.js"></script>
+</head>
+<body>
+<main>
+  <p class="muted" id="brand">ASHREI · TEHILLIM CHAIN</p>
+  <h1 id="title">Loading…</h1>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="150" id="barwrap"><div id="bar"></div></div>
+  <p class="muted" id="meta"></p>
+
+  <div class="card" id="mineCard" hidden>
+    <p class="mine">Your psalms: <span id="mine"></span></p>
+    <p class="muted">Say them from any Tehillim book, then mark each one done. Psalms not finished in 24 hours go back to the chain.</p>
+    <div id="mineButtons"></div>
+  </div>
+
+  <div class="card" id="claimCard" hidden>
+    <p><strong>Take some psalms</strong></p>
+    <div class="seg" role="radiogroup" aria-label="How many">
+      <button data-n="1">1</button><button data-n="3" class="on">3</button><button data-n="5">5</button><button data-n="10">10</button>
+    </div>
+    <input id="name" maxlength="40" placeholder="Your first name (optional)" autocomplete="given-name">
+    <button id="claim">Take 3 psalms</button>
+    <p class="muted" id="error" role="alert"></p>
+  </div>
+
+  <div class="card" id="appCard">
+    <p><strong>Read with Hebrew, transliteration and English</strong></p>
+    <p class="muted">Ashrei shows each psalm line by line and reminds you to finish.</p>
+    <a class="btn" id="appLink" href="#">Open in Ashrei</a>
+  </div>
+
+  <div class="grid" id="grid" aria-label="All 150 psalms"></div>
+</main>
+<script>
+(() => {
+  const cfg = window.ASHREI || {};
+  const $ = (id) => document.getElementById(id);
+  const seg = (location.pathname.split('/c/')[1] || '').replace(/^index\.html$/, '');
+  const id = (seg || new URLSearchParams(location.search).get('id') || '').replace(/[^a-z0-9]/gi, '');
+  const install = localStorage.getItem('ashrei-install') || (() => { const v = 'web-' + Math.random().toString(36).slice(2, 12); localStorage.setItem('ashrei-install', v); return v; })();
+  let count = 3, chain = null, claims = [];
+  $('appLink').href = 'ashrei://chain/' + id;
+  if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || !id) { $('title').textContent = 'This chain link isn’t available yet.'; return; }
+  const H = { apikey: cfg.supabaseAnonKey, Authorization: 'Bearer ' + cfg.supabaseAnonKey, 'Content-Type': 'application/json' };
+  const rest = (path, init = {}) => fetch(cfg.supabaseUrl + '/rest/v1/' + path, { ...init, headers: { ...H, ...(init.headers || {}) } });
+
+  async function load() {
+    const r = await rest('rpc/get_chain', { method: 'POST', body: JSON.stringify({ p_id: id, p_install: install }) });
+    chain = (await r.json())[0];
+    if (!chain) { $('title').textContent = 'This chain wasn’t found.'; return; }
+    await rest('rpc/release_stale_claims', { method: 'POST', body: JSON.stringify({ p_chain: id }) });
+    // Install ids never leave the server: "mine" says which claims are this browser's.
+    claims = await (await rest('rpc/get_chain_claims', { method: 'POST', body: JSON.stringify({ p_chain: id, p_round: chain.round, p_install: install }) })).json();
+    render();
+  }
+
+  function render() {
+    const done = claims.filter((c) => c.done_at).length;
+    document.title = chain.title + ' · Ashrei';
+    $('title').textContent = chain.title;
+    $('bar').style.width = (done / 150 * 100) + '%';
+    $('barwrap').setAttribute('aria-valuenow', done);
+    $('meta').textContent = chain.completed_at ? 'The whole book is complete. Amen.' : done + ' of 150 said · ' + (150 - claims.length) + ' still free';
+    const mine = claims.filter((c) => c.mine && !c.done_at);
+    $('mineCard').hidden = !mine.length;
+    $('mine').textContent = mine.map((c) => c.chapter).join(', ');
+    $('mineButtons').innerHTML = '';
+    mine.forEach((c) => {
+      const b = document.createElement('button');
+      b.textContent = 'Psalm ' + c.chapter + ' is done';
+      b.style.marginTop = '8px';
+      b.onclick = async () => { b.disabled = true; await rest('rpc/finish_chapter', { method: 'POST', body: JSON.stringify({ p_chain: id, p_round: chain.round, p_chapter: c.chapter, p_install: install }) }); load(); };
+      $('mineButtons').appendChild(b);
+    });
+    $('claimCard').hidden = Boolean(chain.completed_at) || claims.length >= 150;
+    const grid = $('grid'); grid.innerHTML = '';
+    const by = new Map(claims.map((c) => [c.chapter, c]));
+    for (let n = 1; n <= 150; n++) {
+      const c = by.get(n), el = document.createElement('div');
+      el.className = 'cell' + (c ? (c.done_at ? ' done' : ' taken') : '');
+      el.textContent = n; el.setAttribute('aria-label', 'Psalm ' + n + ', ' + (c ? (c.done_at ? 'said' : 'taken') : 'free'));
+      grid.appendChild(el);
+    }
+  }
+
+  document.querySelectorAll('.seg button').forEach((b) => b.onclick = () => {
+    document.querySelectorAll('.seg button').forEach((x) => x.classList.toggle('on', x === b));
+    count = Number(b.dataset.n); $('claim').textContent = 'Take ' + count + (count === 1 ? ' psalm' : ' psalms');
+  });
+  $('name').value = localStorage.getItem('ashrei-name') || '';
+  $('claim').onclick = async () => {
+    $('error').textContent = ''; $('claim').disabled = true;
+    localStorage.setItem('ashrei-name', $('name').value.trim());
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const taken = new Set(claims.map((c) => c.chapter)), pick = [];
+      for (let n = 1; n <= 150 && pick.length < count; n++) if (!taken.has(n)) pick.push(n);
+      if (!pick.length) { $('error').textContent = 'All psalms are taken. Check back soon.'; break; }
+      const r = await rest('chain_claims', { method: 'POST', body: JSON.stringify(pick.map((chapter) => ({ chain_id: id, round: chain.round, chapter, install_id: install, display_name: $('name').value.trim().slice(0, 40) }))) });
+      if (r.ok) break;
+      if (r.status !== 409) { $('error').textContent = 'Couldn’t take psalms right now. Try again.'; break; }
+      await load();
+    }
+    $('claim').disabled = false; load();
+  };
+  load().catch(() => { $('title').textContent = 'Couldn’t load this chain. Check your connection.'; });
+})();
+</script>
+</body>
+</html>

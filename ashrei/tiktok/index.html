@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ashrei · Tehillim on your Lock Screen</title>
+<meta name="description" content="Daily Tehillim with Hebrew, transliteration and English. A verse on your Lock Screen, and the Psalm for this minute.">
+<meta property="og:title" content="Ashrei · Tehillim on your Lock Screen">
+<meta property="og:description" content="Daily Tehillim with Hebrew, transliteration and English. 8:04 is Psalms 8:4.">
+<style>
+  :root { --bg:#EEF1FF; --card:#FFFFFF; --ink:#0E1A3A; --muted:#5D6785; --accent:#3B5BD9; --on:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0B1020; --card:#161C30; --ink:#fff; --muted:#A3ABC4; --accent:#8EA9F0; --on:#0B1530; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.45 -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+  main { max-width:520px; margin:0 auto; padding:32px 16px calc(32px + env(safe-area-inset-bottom)); }
+  .brand { font-size:13px; font-weight:700; letter-spacing:1.6px; color:var(--muted); }
+  h1 { font-size:30px; line-height:1.15; letter-spacing:-0.6px; margin:10px 0 8px; }
+  .lock { margin:22px 0; border-radius:30px; padding:22px 18px 26px; color:#fff; text-align:center; background:linear-gradient(160deg,#2B3A78,#6B5CC4 60%,#E9A27A); }
+  .lock .time { font-size:64px; font-weight:700; letter-spacing:-2px; font-variant-numeric:tabular-nums; }
+  .lock .w { background:rgba(255,255,255,.18); border-radius:14px; padding:10px 12px; text-align:left; font-size:14px; font-weight:600; }
+  .lock .w small { display:block; font-weight:400; opacity:.8; margin-top:2px; }
+  ul { padding-left:20px; color:var(--muted); }
+  li { margin:6px 0; }
+  .btn { display:block; height:54px; line-height:54px; border-radius:27px; background:var(--accent); color:var(--on); font-weight:700; text-align:center; text-decoration:none; margin-top:20px; }
+  .btn:active { transform:scale(.98); }
+  .soon { text-align:center; color:var(--muted); font-size:15px; margin-top:16px; }
+  @media (prefers-reduced-motion: reduce) { .btn:active { transform:none; } }
+</style>
+<script src="../config.js"></script>
+</head>
+<body>
+<main>
+  <div class="brand">ASHREI</div>
+  <h1>Tehillim on your Lock Screen</h1>
+  <p style="color:var(--muted);margin:0">Check the time: 8:04 is Psalms 8:4.</p>
+  <div class="lock" aria-hidden="true">
+    <div class="time">8:04</div>
+    <div class="w">When I behold Your heavens, the work of Your fingers…<small>Psalms 8:4</small></div>
+  </div>
+  <ul>
+    <li>Daily Tehillim in Hebrew, transliteration and English</li>
+    <li>Lock Screen widgets: the Psalm for this minute, a verse every 3 hours, Shabbat times</li>
+    <li>Personal Tehillim for your name, a prayer list, and chains with friends</li>
+  </ul>
+  <a class="btn" id="get" href="#" hidden>Get Ashrei on the App Store</a>
+  <p class="soon" id="soon">Coming soon to the App Store.</p>
+</main>
+<script>
+  var url = window.ASHREI && window.ASHREI.appStoreUrl;
+  if (url) {
+    var a = document.getElementById('get');
+    a.href = url; a.hidden = false;
+    document.getElementById('soon').hidden = true;
+    // Straight to the store from a TikTok/Instagram bio link (keeps the page as a fallback).
+    if (/iPhone|iPad/.test(navigator.userAgent) && location.search.indexOf('stay') < 0) location.replace(url);
+  }
+</script>
+</body>
+</html>
